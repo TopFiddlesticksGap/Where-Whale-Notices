@@ -1,0 +1,29 @@
+name: 공지 작성
+description: 제목과 본문을 쓰고 사진을 첨부하면 게임 공지로 자동 게시합니다.
+labels: [notice]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        제목은 위 제목 칸에 입력해주세요.
+        아래에 본문을 쓰고 사진을 첨부한 다음 Submit new issue를 누르면 됩니다.
+        날짜와 사진 주소는 자동 처리됩니다. 사진은 PNG/JPG, 최대 5장입니다.
+  - type: textarea
+    id: content
+    attributes:
+      label: 본문
+      description: 글을 입력하고 이 입력창 아래의 첨부 버튼으로 사진을 선택해주세요. PC에서는 끌어놓거나 붙여넣어도 됩니다.
+      placeholder: 플레이어에게 전할 소식을 작성해주세요.
+    validations:
+      required: true
+  - type: dropdown
+    id: publication
+    attributes:
+      label: 게시 상태
+      description: 게시에 두면 게임에 표시되고, 임시저장에 두면 게임에는 표시되지 않습니다. GitHub 게시글 자체는 공개됩니다.
+      options:
+        - 게시
+        - 임시저장
+      default: 0
+    validations:
+      required: true

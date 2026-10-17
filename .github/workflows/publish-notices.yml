@@ -1,0 +1,50 @@
+name: 공지 자동 게시
+on:
+  issues:
+    types: [opened, edited, reopened, closed, deleted, labeled, unlabeled]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/publish-notices.yml
+      - scripts/**
+      - legacy-notices.json
+permissions:
+  contents: write
+  issues: read
+concurrency:
+  group: notice-publisher
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 공지 저장소 읽기
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7, MIT / https://github.com/actions/checkout
+        with:
+          ref: main
+      - name: 사진 처리 도구 준비
+        run: |
+          python3 -m venv "$RUNNER_TEMP/notice-tools"
+          "$RUNNER_TEMP/notice-tools/bin/python" -m pip install -r scripts/requirements.txt
+          echo "$RUNNER_TEMP/notice-tools/bin" >> "$GITHUB_PATH"
+      - name: 공지 변환 검증
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: 게시글에서 게임 공지 생성
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 scripts/publish_notices.py
+      - name: 변경된 공지 반영
+        shell: bash
+        run: |
+          if test -z "$(git status --porcelain -- notices.json images/generated)"; then
+            echo '공지 변경이 없습니다.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add notices.json images/generated
+          git commit -m '공지 게시글 변경 자동 반영'
+          git push origin HEAD:main
