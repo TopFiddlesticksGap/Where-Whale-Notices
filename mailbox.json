@@ -1,5 +1,33 @@
 {
     "version": 1,
-    "mails": [],
-    "coupons": []
+    "mails": [
+        {
+            "id": "mail-20261018-050542",
+            "title": "운영자 선물",
+            "sentDate": "2026-10-18",
+            "expireDate": "",
+            "rewards": [
+                {
+                    "kind": "diamond",
+                    "id": "",
+                    "amount": 100
+                }
+            ]
+        }
+    ],
+    "coupons": [
+        {
+            "hash": "b635db0f4dc6a347a6bd577701caafd4e77989d0579e581ee9a82c8de3b0aedd",
+            "title": "쿠폰 보상",
+            "startDate": "2026-10-18",
+            "expireDate": "",
+            "rewards": [
+                {
+                    "kind": "diamond",
+                    "id": "",
+                    "amount": 100
+                }
+            ]
+        }
+    ]
 }
