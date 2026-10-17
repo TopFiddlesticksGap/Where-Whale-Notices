@@ -30,6 +30,18 @@ class MediaTests(unittest.TestCase):
                 self.assertEqual(result['kind'], 'video' if extension == 'mp4' else 'audio')
                 self.assertLessEqual(result['width'], 720)
 
+    def test_compatible_aac_is_not_recompressed(self):
+        import json
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); source = root / 'aac.mp4'
+            subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=blue:s=160x90:d=0.5',
+                '-f', 'lavfi', '-i', 'sine=frequency=440:duration=0.5', '-c:v', 'libx264', '-c:a', 'aac', '-b:a', '128k', '-ar', '44100', '-ac', '2', '-shortest', str(source)], check=True)
+            result = convert_media(source.read_bytes(), root, 'copy')
+            def hashes(path):
+                output = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'a:0', '-show_packets', '-show_data_hash', 'sha256', '-of', 'json', str(path)], capture_output=True, check=True)
+                return [p['data_hash'] for p in json.loads(output.stdout)['packets']]
+            self.assertEqual(hashes(source), hashes(root / result['file']))
+
     def test_arbitrary_file_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             with self.assertRaises(subprocess.CalledProcessError):

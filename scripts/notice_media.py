@@ -53,7 +53,13 @@ def convert_media(data: bytes, directory: Path, stem: str) -> dict:
                 raise ValueError('영상 해상도가 올바르지 않습니다.')
             command += ['-map', '0:v:0', '-vf', "scale=w='min(720,iw)':h='min(720,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2:out_color_matrix=bt709,pad=ceil(iw/2)*2:ceil(ih/2)*2", '-r', '24',
                 '-c:v', 'libx264', '-preset', 'fast', '-crf', '25', '-maxrate', '1200k', '-bufsize', '2400k', '-pix_fmt', 'yuv420p', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-movflags', '+faststart']
-            command += ['-an'] if gif else ['-map', '0:a:0?', '-c:a', 'aac', '-b:a', '96k', '-ac', '2']
+            if gif:
+                command += ['-an']
+            elif audio and audio.get('codec_name') == 'aac' and audio.get('profile') == 'LC' and int(audio.get('channels', 0)) in {1, 2} and int(audio.get('sample_rate', 0)) in {44100, 48000}:
+                # 호환되는 원본 AAC는 재압축하지 않아 음악의 음질을 그대로 유지합니다.
+                command += ['-map', '0:a:0', '-c:a', 'copy']
+            else:
+                command += ['-map', '0:a:0?', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-ac', '2']
         try:
             subprocess.run(command + [str(target)], capture_output=True, timeout=120, check=True)
             if target.stat().st_size > 12 * 1024 * 1024:
@@ -71,7 +77,7 @@ def publish_attachment(url: str, repository: str, number: int, index: int, folde
         raise ValueError('첨부 파일 주소를 확인해주세요.')
     directory = folder or Path('images/generated')
     directory.mkdir(parents=True, exist_ok=True)
-    stem = f"media-v1-{number}-{index}-{hashlib.sha256(url.encode()).hexdigest()[:16]}"
+    stem = f"media-v2-{number}-{index}-{hashlib.sha256(url.encode()).hexdigest()[:16]}"
     photo_cache = next((p for p in directory.glob(stem + '.*') if p.suffix in {'.png', '.jpg'}), None)
     if photo_cache is not None:
         return 'image', f'https://raw.githubusercontent.com/{repository}/main/images/generated/{photo_cache.name}'
