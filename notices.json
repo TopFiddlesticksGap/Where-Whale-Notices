@@ -2,6 +2,15 @@
   "version": 1,
   "notices": [
     {
+      "id": "notice-features-20261017-231553",
+      "date": "2026-10-17",
+      "title": "알림과 사진 공지 기능을 확인해보세요",
+      "body": "새로운 공지 안내입니다.\n\n이제 게임 안에서 최신 소식과 첨부 사진을 확인하실 수 있습니다. 공지 창의 새로고침 버튼을 누르면 최신 내용을 다시 불러옵니다.\n\n설정에서는 출석 알림과 접속 알림을 각각 켤 수 있습니다. 안드로이드 기기에서 알림 권한도 함께 허용해주세요.\n\n오늘도 고래들과 함께 즐거운 바다 여행을 이어가세요.",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/where-whale-logo.png"
+      ]
+    },
+    {
       "id": "attendance-20261017",
       "date": "2026-10-17",
       "title": "30일 출석 보상 안내",
