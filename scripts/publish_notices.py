@@ -101,12 +101,14 @@ def convert(issue: dict, repository: str) -> dict | None:
     urls.extend(image_url(url, repository) for url in parser.images)
     urls = list(dict.fromkeys(urls))
     if len(urls) > 5:
-        raise ValueError("사진은 최대 5장까지 첨부해주세요.")
+        raise ValueError("첨부 파일은 합쳐서 최대 5개까지 올려주세요.")
     text = "".join(parser.parts)
     text = re.sub(r"^#{1,6}\s+", "", text, flags=re.M)
     text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
     text = re.sub(r"\[([^\]]+)\]\((https://[^\s)]+)\)", r"\1 (\2)", text)
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
+    if not text and urls:
+        text = "첨부 파일을 확인해주세요."
     title = (issue.get("title") or "").strip()
     if not title or len(title) > 128 or not text or len(text) > 8000:
         raise ValueError("제목은 1~128자, 본문은 1~8,000자로 작성해주세요.")

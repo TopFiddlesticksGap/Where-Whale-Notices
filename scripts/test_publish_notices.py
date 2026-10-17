@@ -40,6 +40,11 @@ class PublishingTests(unittest.TestCase):
         self.assertEqual(result["imageUrls"], [url, PHOTO])
         self.assertNotIn("https://", result["body"])
 
+    def test_attachment_without_body_text(self):
+        result = convert(issue(PHOTO), REPOSITORY)
+        self.assertEqual(result["imageUrls"], [PHOTO])
+        self.assertEqual(result["body"], "첨부 파일을 확인해주세요.")
+
     def test_html_video(self):
         result = convert(issue(f'본문\n<video src="{PHOTO}"></video>'), REPOSITORY)
         self.assertEqual(result["imageUrls"], [PHOTO])

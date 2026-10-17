@@ -51,8 +51,8 @@ def convert_media(data: bytes, directory: Path, stem: str) -> dict:
             width, height = int(video.get('width', 0)), int(video.get('height', 0))
             if width <= 0 or height <= 0 or width * height > 40_000_000:
                 raise ValueError('영상 해상도가 올바르지 않습니다.')
-            command += ['-map', '0:v:0', '-vf', "scale=w='min(720,iw)':h='min(720,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2,pad=ceil(iw/2)*2:ceil(ih/2)*2", '-r', '24',
-                '-c:v', 'libx264', '-preset', 'fast', '-crf', '25', '-maxrate', '1200k', '-bufsize', '2400k', '-pix_fmt', 'yuv420p', '-movflags', '+faststart']
+            command += ['-map', '0:v:0', '-vf', "scale=w='min(720,iw)':h='min(720,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2:out_color_matrix=bt709,pad=ceil(iw/2)*2:ceil(ih/2)*2", '-r', '24',
+                '-c:v', 'libx264', '-preset', 'fast', '-crf', '25', '-maxrate', '1200k', '-bufsize', '2400k', '-pix_fmt', 'yuv420p', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-movflags', '+faststart']
             command += ['-an'] if gif else ['-map', '0:a:0?', '-c:a', 'aac', '-b:a', '96k', '-ac', '2']
         try:
             subprocess.run(command + [str(target)], capture_output=True, timeout=120, check=True)
