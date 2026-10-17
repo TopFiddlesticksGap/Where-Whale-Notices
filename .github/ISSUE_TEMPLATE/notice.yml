@@ -1,26 +1,26 @@
 name: 공지 작성
-description: 제목이랑 내용 적고 사진 넣으면 게임에 공지가 올라갑니다.
+description: 제목이랑 내용 적고 사진 넣으면 게임에 공지 올라감.
 labels: [notice]
 body:
   - type: markdown
     attributes:
       value: |
-        제목은 위에 적으면 됩니다.
-        아래에 내용 적고 사진 넣은 다음 맨 아래 Create 누르면 됩니다.
-        날짜랑 사진 주소는 알아서 처리됩니다. 사진은 PNG/JPG로 최대 5장까지 넣을 수 있습니다.
+        제목은 위에 적어.
+        아래에 내용 적고 사진 넣은 다음 맨 아래 Create 눌러.
+        날짜랑 사진 주소는 알아서 처리됨. 사진은 PNG/JPG로 최대 5장까지 넣을 수 있음.
   - type: textarea
     id: content
     attributes:
       label: 본문
-      description: 내용 적고 사진은 입력창 바로 아래 클립 버튼 눌러서 넣으면 됩니다. PC에서는 그냥 끌어다 놓거나 붙여넣어도 됩니다.
-      placeholder: 여기에 공지 내용을 적으면 됩니다.
+      description: 내용 적고 사진은 입력창 바로 아래 클립 버튼 눌러서 넣어. PC에서는 그냥 끌어다 놓거나 붙여넣어도 됨.
+      placeholder: 여기에 공지 내용 적어.
     validations:
       required: true
   - type: dropdown
     id: publication
     attributes:
       label: 게시 상태
-      description: 게시로 두면 게임에 뜨고, 임시저장으로 두면 게임에는 안 뜹니다. 다만 임시저장이어도 GitHub에서는 글이 보입니다.
+      description: 게시로 두면 게임에 뜨고 임시저장으로 두면 게임에는 안 뜸. 글고 임시저장이어도 GitHub에서는 글 보임.
       options:
         - 게시
         - 임시저장
