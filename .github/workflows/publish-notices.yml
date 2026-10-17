@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7, MIT / https://github.com/actions/checkout
         with:
           ref: main
+      - name: 영상 변환 도구 준비
+        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
       - name: 사진 처리 도구 준비
         run: |
           python3 -m venv "$RUNNER_TEMP/notice-tools"

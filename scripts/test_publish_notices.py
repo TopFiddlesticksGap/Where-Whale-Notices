@@ -34,6 +34,17 @@ class PublishingTests(unittest.TestCase):
         result = convert(issue(f"본문\n![a]({PHOTO})\n![b]({PHOTO})"), REPOSITORY)
         self.assertEqual(len(result["imageUrls"]), 1)
 
+    def test_video_url_and_mp3_link(self):
+        url = "https://github.com/user-attachments/files/123/music.mp3"
+        result = convert(issue(f"본문\n{PHOTO}\n[소리]({url})"), REPOSITORY)
+        self.assertEqual(result["imageUrls"], [url, PHOTO])
+        self.assertNotIn("https://", result["body"])
+
+    def test_html_video(self):
+        result = convert(issue(f'본문\n<video src="{PHOTO}"></video>'), REPOSITORY)
+        self.assertEqual(result["imageUrls"], [PHOTO])
+        self.assertEqual(result["body"], "본문")
+
     def test_draft_is_not_published(self):
         self.assertIsNone(convert(issue(state="임시저장"), REPOSITORY))
 

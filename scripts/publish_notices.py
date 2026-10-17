@@ -14,12 +14,18 @@ from html.parser import HTMLParser
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from notice_photos import publish_photo
+from notice_media import publish_attachment
+import subprocess
 
 MAX_BYTES = 256 * 1024
 MAX_NOTICES = 50
 STAFF = {"OWNER", "MEMBER", "COLLABORATOR"}
 MARKDOWN_IMAGE = re.compile(r'!\[[^\]]*\]\(\s*(https://[^\s)]+)(?:\s+["\'][^"\']*["\'])?\s*\)')
+
+
+class _UrlMatch:
+    def __init__(self, value): self.value = value
+    def group(self, _): return self.value
 
 
 class PlainText(HTMLParser):
@@ -29,7 +35,7 @@ class PlainText(HTMLParser):
         self.images: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag == "img":
+        if tag in {"img", "video", "audio", "source"}:
             source = dict(attrs).get("src")
             if source:
                 self.images.append(source)
@@ -56,7 +62,7 @@ def image_url(value: str, repository: str) -> str:
         raise ValueError("사진은 GitHub에 첨부한 공개 HTTPS 이미지를 사용해주세요.")
     host = parsed.hostname or ""
     allowed = host == "user-images.githubusercontent.com" or (
-        host == "github.com" and parsed.path.startswith("/user-attachments/assets/")
+        host == "github.com" and parsed.path.startswith(("/user-attachments/assets/", "/user-attachments/files/"))
     ) or (host == "raw.githubusercontent.com" and parsed.path.startswith("/" + repository + "/main/images/"))
     if not allowed:
         raise ValueError("외부 사진 주소 대신 본문 입력창에 사진을 첨부해주세요.")
@@ -81,6 +87,14 @@ def convert(issue: dict, repository: str) -> dict | None:
         return "\n"
 
     content = MARKDOWN_IMAGE.sub(replace_image, content)
+    # GitHub는 MP4를 단독 URL, MP3를 파일 링크로 본문에 넣습니다.
+    attachment = r'https://github\.com/user-attachments/(?:assets|files)/[^\s<>"\')]+|https://user-images\.githubusercontent\.com/[^\s<>"\')]+\.gif'
+    def replace_attachment(match):
+        urls.append(image_url(match.group(0), repository))
+        return ""
+    content = re.sub(r'\[[^\]]*\]\((' + attachment + r')\)', lambda m: replace_attachment(_UrlMatch(m.group(1))), content)
+    # HTML 태그의 src는 아래 HTMLParser가 처리합니다.
+    content = re.sub(r'(?<!["\'])' + attachment, replace_attachment, content)
     parser = PlainText()
     parser.feed(content)
     parser.close()
@@ -125,10 +139,14 @@ def main() -> int:
             try:
                 entry = convert(issue, repository)
                 if entry is not None:
-                    entry["imageUrls"] = [publish_photo(url, repository, issue["number"], index)
-                        for index, url in enumerate(entry["imageUrls"], start=1)]
+                    sources = entry["imageUrls"]
+                    entry["imageUrls"], entry["media"] = [], []
+                    for index, url in enumerate(sources, start=1):
+                        kind, asset = publish_attachment(url, repository, issue["number"], index)
+                        if kind == "image": entry["imageUrls"].append(asset)
+                        else: entry["media"].append(asset)
                     publications.append(entry)
-            except (ValueError, KeyError, TypeError, OSError, urllib.error.URLError) as error:
+            except (ValueError, KeyError, TypeError, OSError, urllib.error.URLError, subprocess.SubprocessError) as error:
                 number = int(issue.get("number", 0))
                 failures.append(f"공지 #{number}: {error}")
                 old = previous.get(f"issue-{number}")

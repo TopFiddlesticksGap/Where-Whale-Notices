@@ -7,12 +7,12 @@ body:
       value: |
         제목은 위에 적어.
         아래에 내용 적고 사진 넣은 다음 맨 아래 Create 눌러.
-        날짜랑 사진 주소는 알아서 처리됨. 사진은 PNG/JPG로 최대 5장까지 넣을 수 있음.
+        날짜랑 사진 주소는 알아서 처리됨. 사진, GIF, MP4, MP3 합쳐서 최대 5개까지 넣을 수 있음. 파일 하나당 20MB 이하, 영상이랑 GIF는 60초 이하, MP3는 120초 이하로 올려.
   - type: textarea
     id: content
     attributes:
       label: 본문
-      description: 내용 적고 사진은 입력창 바로 아래 클립 버튼 눌러서 넣어. PC에서는 그냥 끌어다 놓거나 붙여넣어도 됨.
+      description: 내용 적고 사진이나 영상, 오디오는 입력창 바로 아래 클립 버튼 눌러서 넣어. PC에서는 그냥 끌어다 놓거나 붙여넣어도 됨.
       placeholder: 여기에 공지 내용 적어.
     validations:
       required: true

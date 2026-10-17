@@ -1587,3 +1587,10 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+## FFmpeg (게시 도구 전용)
+
+Source: https://ffmpeg.org/
+Documentation: https://ffmpeg.org/ffmpeg-all.html
+License: https://ffmpeg.org/legal.html (빌드 옵션에 따라 LGPL 또는 GPL이며, libx264 사용 빌드는 GPL입니다.)
+공지 게시 작업에서 시스템에 설치된 ffmpeg/ffprobe 실행 파일을 사용합니다. 이 저장소나 게임에 FFmpeg 바이너리를 포함하지 않습니다. GIF/MP4는 H.264/AAC, MP3는 libmp3lame으로 변환합니다.

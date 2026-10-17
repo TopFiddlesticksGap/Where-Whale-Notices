@@ -51,3 +51,9 @@ GitHub의 자동 게시 작업이 끝나면 게임에 반영됩니다. 게임의
 ## 출처
 
 GitHub Issues·Issue Forms·GitHub Actions를 사용합니다. 공식 actions/checkout은 MIT 라이선스이며, 사진 처리는 Pillow 13.0.0을 사용합니다. 출처와 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 기록합니다.
+
+## GIF, 동영상, 오디오 첨부
+
+기존 클립 버튼에 PNG/JPG/WEBP/GIF/MP4/MP3 파일을 넣습니다. 첨부는 합쳐서 5개, 원본 파일은 각 20MB 이하입니다. GIF와 MP4는 60초 이하, MP3는 120초 이하로 준비합니다. 영상은 H.264/AAC MP4, 최대 720px/24fps로 변환하고 GIF는 소리 없는 반복 영상으로 변환합니다. 변환 결과는 12MB 이하입니다. 게임에서 재생 버튼을 누를 때만 다운로드하며, 동시에 하나만 재생합니다. 이 기능은 미디어 지원이 추가된 게임 빌드에서 사용할 수 있습니다. 기존 설치 APK에는 자동으로 코드가 추가되지 않습니다.
+
+GitHub 첨부 방식: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files
