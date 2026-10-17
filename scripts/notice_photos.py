@@ -19,7 +19,7 @@ def allowed_host(url: str) -> bool:
     parsed = urllib.parse.urlsplit(url)
     host = parsed.hostname or ""
     return parsed.scheme == "https" and not parsed.username and not parsed.password and (
-        host == "github.com" or host.endswith(".githubusercontent.com") or host.endswith(".blob.core.windows.net"))
+        host in {"github.com", "github-production-user-asset-6210df.s3.amazonaws.com"} or host.endswith(".githubusercontent.com") or host.endswith(".blob.core.windows.net"))
 
 
 class ImageRedirects(urllib.request.HTTPRedirectHandler):

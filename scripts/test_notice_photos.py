@@ -52,6 +52,9 @@ class PhotoTests(unittest.TestCase):
     def test_redirect_destination_is_restricted(self):
         self.assertTrue(allowed_host("https://github.com/user-attachments/assets/1"))
         self.assertTrue(allowed_host("https://private-user-images.githubusercontent.com/image.png"))
+        self.assertTrue(allowed_host("https://github-production-user-asset-6210df.s3.amazonaws.com/photo.png"))
+        self.assertFalse(allowed_host("https://attacker.s3.amazonaws.com/photo.png"))
+        self.assertFalse(allowed_host("https://github-production-user-asset-6210df.s3.amazonaws.com.attacker.com/photo.png"))
         self.assertFalse(allowed_host("http://github.com/photo.png"))
         self.assertFalse(allowed_host("https://example.com/photo.png"))
         self.assertFalse(allowed_host("https://githubusercontent.com.attacker.com/photo.png"))
