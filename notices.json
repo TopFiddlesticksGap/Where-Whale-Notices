@@ -2,6 +2,22 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-5",
+      "date": "2026-10-18",
+      "title": "공지 테스트",
+      "body": "ㄹㅇㄴㅁㄹㅁㄴㅇㄹㄴㅁㄹㅁ",
+      "imageUrls": [],
+      "media": [
+        {
+          "kind": "audio",
+          "width": 0,
+          "height": 0,
+          "duration": 205.090525,
+          "url": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-5-1-704d8d2ed55855c3.mp3"
+        }
+      ]
+    },
+    {
       "id": "issue-4",
       "date": "2026-10-18",
       "title": "럭키 봉봉",
