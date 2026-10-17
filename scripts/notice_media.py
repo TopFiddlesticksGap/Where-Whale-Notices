@@ -18,6 +18,21 @@ def probe(path: Path) -> dict:
     return json.loads(result.stdout)
 
 
+def make_poster(video: Path, directory: Path, stem: str) -> str:
+    """재생 전 썸네일로 쓸 첫 장면을 작은 JPG로 저장하고 파일 이름을 돌려줍니다."""
+    target = directory / (stem + '-poster.jpg')
+    command = ['ffmpeg', '-nostdin', '-v', 'error', '-y', '-protocol_whitelist', 'file,pipe', '-i', str(video), '-map_metadata', '-1',
+        '-frames:v', '1', '-vf', "scale=w='min(720,iw)':h='min(720,ih)':force_original_aspect_ratio=decrease", '-q:v', '4', str(target)]
+    try:
+        subprocess.run(command, capture_output=True, timeout=30, check=True)
+        if target.stat().st_size > 1024 * 1024:
+            raise ValueError('대표 이미지가 너무 큽니다.')
+        return target.name
+    except Exception:
+        target.unlink(missing_ok=True)
+        raise
+
+
 def convert_media(data: bytes, directory: Path, stem: str) -> dict:
     if not data or len(data) > MAX_DOWNLOAD:
         raise ValueError('첨부 파일은 20MB 이하로 올려주세요.')
@@ -66,7 +81,10 @@ def convert_media(data: bytes, directory: Path, stem: str) -> dict:
                 raise ValueError('변환된 파일이 너무 큽니다. 더 짧은 파일로 올려주세요.')
             output = probe(target)
             stream = next((s for s in output['streams'] if s['codec_type'] == 'video'), {})
-            return {'kind': kind, 'width': stream.get('width', 0), 'height': stream.get('height', 0), 'duration': duration, 'file': target.name}
+            result = {'kind': kind, 'width': stream.get('width', 0), 'height': stream.get('height', 0), 'duration': duration, 'file': target.name}
+            if kind == 'video':
+                result['poster'] = make_poster(target, directory, stem)
+            return result
         except Exception:
             target.unlink(missing_ok=True)
             raise
@@ -85,8 +103,11 @@ def publish_attachment(url: str, repository: str, number: int, index: int, folde
     if manifest.exists():
         result = json.loads(manifest.read_text())
         if (directory / result['file']).exists():
-            result['url'] = f"https://raw.githubusercontent.com/{repository}/main/images/generated/{result.pop('file')}"
-            return result['kind'], result
+            if result['kind'] == 'video' and not (directory / result.get('poster', '')).is_file():
+                # 대표 이미지가 생기기 전에 변환한 영상도 다시 변환하지 않고 첫 장면만 추가합니다.
+                result['poster'] = make_poster(directory / result['file'], directory, stem)
+                manifest.write_text(json.dumps(result), encoding='utf-8')
+            return result['kind'], public_asset(result, repository)
     opener = urllib.request.build_opener(ImageRedirects())
     request = urllib.request.Request(url, headers={'User-Agent': 'WhereWhale-NoticePublisher'})
     with opener.open(request, timeout=30) as response:
@@ -107,5 +128,14 @@ def publish_attachment(url: str, repository: str, number: int, index: int, folde
         return 'image', f'https://raw.githubusercontent.com/{repository}/main/images/generated/{target.name}'
     result = convert_media(data, directory, stem)
     manifest.write_text(json.dumps(result), encoding='utf-8')
-    result['url'] = f"https://raw.githubusercontent.com/{repository}/main/images/generated/{result.pop('file')}"
-    return result['kind'], result
+    return result['kind'], public_asset(result, repository)
+
+
+def public_asset(result: dict, repository: str) -> dict:
+    """저장소 파일 이름을 게임 피드에서 쓰는 공개 주소로 바꿉니다."""
+    base = f"https://raw.githubusercontent.com/{repository}/main/images/generated/"
+    asset = {key: value for key, value in result.items() if key not in {'file', 'poster'}}
+    asset['url'] = base + result['file']
+    if result.get('poster'):
+        asset['poster'] = base + result['poster']
+    return asset

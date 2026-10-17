@@ -29,6 +29,13 @@ class MediaTests(unittest.TestCase):
                 result = convert_media(path.read_bytes(), root, 'output-' + extension)
                 self.assertEqual(result['kind'], 'video' if extension == 'mp4' else 'audio')
                 self.assertLessEqual(result['width'], 720)
+                if extension == 'mp4':
+                    poster = root / result['poster']
+                    with Image.open(poster) as picture:
+                        self.assertEqual(picture.format, 'JPEG')
+                        self.assertLessEqual(max(picture.size), 720)
+                else:
+                    self.assertNotIn('poster', result)
 
     def test_compatible_aac_is_not_recompressed(self):
         import json
