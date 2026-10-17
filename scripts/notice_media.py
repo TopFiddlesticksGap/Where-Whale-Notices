@@ -40,8 +40,8 @@ def convert_media(data: bytes, directory: Path, stem: str) -> dict:
             raise ValueError('영상 트랙이 없습니다.')
         if kind == 'audio' and not is_mp3:
             raise ValueError('오디오는 MP3로 올려주세요.')
-        if duration > (120 if kind == 'audio' else 60):
-            raise ValueError('영상/GIF는 60초, MP3는 120초 이하로 올려주세요.')
+        if duration > (600 if kind == 'audio' else 60):
+            raise ValueError('영상/GIF는 60초, MP3는 600초 이하로 올려주세요.')
         extension = 'mp3' if kind == 'audio' else 'mp4'
         target = directory / (stem + '.' + extension)
         command = ['ffmpeg', '-nostdin', '-v', 'error', '-y', '-protocol_whitelist', 'file,pipe', '-i', str(source), '-map_metadata', '-1']

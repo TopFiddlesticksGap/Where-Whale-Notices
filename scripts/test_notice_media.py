@@ -38,6 +38,6 @@ class MediaTests(unittest.TestCase):
     def test_long_audio_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / 'long.mp3'
-            subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=121', str(path)], check=True)
+            subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=601', str(path)], check=True)
             with self.assertRaises(ValueError):
                 convert_media(path.read_bytes(), Path(folder), 'bad')

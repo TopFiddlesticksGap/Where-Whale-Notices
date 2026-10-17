@@ -69,8 +69,10 @@ def image_url(value: str, repository: str) -> str:
     return value
 
 
-def convert(issue: dict, repository: str) -> dict | None:
-    if issue.get("pull_request") or issue.get("state") != "open" or issue.get("author_association") not in STAFF:
+def convert(issue: dict, repository: str, approved_users: tuple | list = ()) -> dict | None:
+    login = (issue.get("user", {}).get("login") or "").casefold()
+    approved = login in {user.casefold() for user in approved_users}
+    if issue.get("pull_request") or issue.get("state") != "open" or (issue.get("author_association") not in STAFF and not approved):
         return None
     if "notice" not in {label["name"] for label in issue.get("labels", [])}:
         return None
@@ -129,6 +131,9 @@ def main() -> int:
     repository = os.environ["GH_REPO"]
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
         raise ValueError("저장소 이름을 확인해주세요.")
+    approved_users = json.loads(Path("publishers.json").read_text()).get("users", [])
+    if not isinstance(approved_users, list) or any(not isinstance(user, str) or not re.fullmatch(r"[A-Za-z0-9-]{1,39}", user) for user in approved_users):
+        raise ValueError("publishers.json의 공지 작성자 계정을 확인해주세요.")
     previous = {entry["id"]: entry for entry in json.loads(Path("notices.json").read_text())["notices"]}
     legacy = json.loads(Path("legacy-notices.json").read_text())["notices"]
     publications: list[dict] = []
@@ -139,7 +144,7 @@ def main() -> int:
             raise ValueError("공지 목록을 읽지 못했습니다.")
         for issue in issues:
             try:
-                entry = convert(issue, repository)
+                entry = convert(issue, repository, approved_users)
                 if entry is not None:
                     sources = entry["imageUrls"]
                     entry["imageUrls"], entry["media"] = [], []

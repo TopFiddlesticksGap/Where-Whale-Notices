@@ -61,6 +61,17 @@ class PublishingTests(unittest.TestCase):
         value = issue(); value["author_association"] = "CONTRIBUTOR"
         self.assertIsNone(convert(value, REPOSITORY))
 
+    def test_approved_friend_without_org_membership(self):
+        value = issue(); value["author_association"] = "NONE"; value["user"] = {"login": "Friend"}
+        self.assertIsNotNone(convert(value, REPOSITORY, ["friend"]))
+        self.assertIsNone(convert(value, REPOSITORY, ["someone-else"]))
+
+    def test_approved_friend_still_needs_label_and_publication(self):
+        value = issue(state="임시저장"); value["author_association"] = "NONE"; value["user"] = {"login": "Friend"}
+        self.assertIsNone(convert(value, REPOSITORY, ["friend"]))
+        value = issue(); value["author_association"] = "NONE"; value["user"] = {"login": "Friend"}; value["labels"] = []
+        self.assertIsNone(convert(value, REPOSITORY, ["friend"]))
+
     def test_unlabelled_is_not_published(self):
         value = issue(); value["labels"] = []
         self.assertIsNone(convert(value, REPOSITORY))

@@ -9,6 +9,7 @@ on:
       - .github/workflows/publish-notices.yml
       - scripts/**
       - legacy-notices.json
+      - publishers.json
 permissions:
   contents: write
   issues: read
