@@ -2,6 +2,15 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-1",
+      "date": "2026-10-18",
+      "title": "공지사항 테스트--1",
+      "body": "Hello World!",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/notice-1-1-69582067ac11b10f.png"
+      ]
+    },
+    {
       "id": "notice-features-20261017-231553",
       "date": "2026-10-17",
       "title": "알림과 사진 공지 기능을 확인해보세요",
