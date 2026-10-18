@@ -13,9 +13,11 @@ on:
 permissions:
   contents: write
   issues: read
+# 게시할 때마다 모든 공지를 다시 만들므로 마지막 실행만 있으면 됩니다.
+# 글 작성과 라벨 추가가 동시에 실행을 두 번 만들 때 앞 실행을 기다리지 않고 바로 취소합니다.
 concurrency:
   group: notice-publisher
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -25,19 +27,35 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7, MIT / https://github.com/actions/checkout
         with:
           ref: main
-      - name: 영상 변환 도구 준비
-        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+      # FFmpeg는 새 영상·음성 첨부를 변환할 때만 notice_media.py가 설치합니다.
+      - name: 파이썬 버전 확인
+        id: python
+        run: echo "version=$(python3 -c 'import sys; print(sys.version.split()[0])')" >> "$GITHUB_OUTPUT"
+      - name: 사진 처리 도구 캐시
+        id: tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, MIT / https://github.com/actions/cache
+        with:
+          path: ${{ runner.temp }}/notice-tools
+          key: notice-tools-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('scripts/requirements.txt') }}
       - name: 사진 처리 도구 준비
         run: |
-          python3 -m venv "$RUNNER_TEMP/notice-tools"
-          "$RUNNER_TEMP/notice-tools/bin/python" -m pip install -r scripts/requirements.txt
+          if test "${{ steps.tools.outputs.cache-hit }}" != 'true'; then
+            python3 -m venv "$RUNNER_TEMP/notice-tools"
+            "$RUNNER_TEMP/notice-tools/bin/python" -m pip install -q -r scripts/requirements.txt
+          fi
           echo "$RUNNER_TEMP/notice-tools/bin" >> "$GITHUB_PATH"
+      # 변환 스크립트가 바뀔 때만 검증합니다. 게시글 작성·수정 때는 바로 게시합니다.
+      - name: 영상 변환 도구 준비
+        if: github.event_name != 'issues'
+        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
       - name: 공지 변환 검증
+        if: github.event_name != 'issues'
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - name: 게시글에서 게임 공지 생성
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          NOTICE_INSTALL_FFMPEG: '1'
         run: python3 scripts/publish_notices.py
       - name: 변경된 공지 반영
         shell: bash

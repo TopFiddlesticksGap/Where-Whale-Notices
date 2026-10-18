@@ -4,12 +4,24 @@ import hashlib
 import io
 import json
 import math
+import os
+import shutil
 import subprocess
 import tempfile
 import urllib.request
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 from notice_photos import ImageRedirects, MAX_DOWNLOAD, allowed_host
+
+
+def ensure_ffmpeg() -> None:
+    """새 첨부를 변환할 때만 FFmpeg를 설치합니다. 글만 있거나 이미 변환한 공지는 설치 시간 없이 바로 게시합니다."""
+    if shutil.which('ffmpeg') and shutil.which('ffprobe'):
+        return
+    if os.environ.get('NOTICE_INSTALL_FFMPEG') != '1':
+        raise OSError('FFmpeg가 설치되어 있지 않습니다.')
+    for command in (['sudo', 'apt-get', 'update', '-qq'], ['sudo', 'apt-get', 'install', '-y', '-qq', '--no-install-recommends', 'ffmpeg']):
+        subprocess.run(command, capture_output=True, timeout=240, check=True)
 
 
 def probe(path: Path) -> dict:
@@ -20,6 +32,7 @@ def probe(path: Path) -> dict:
 
 def make_poster(video: Path, directory: Path, stem: str) -> str:
     """재생 전 썸네일로 쓸 첫 장면을 작은 JPG로 저장하고 파일 이름을 돌려줍니다."""
+    ensure_ffmpeg()
     target = directory / (stem + '-poster.jpg')
     command = ['ffmpeg', '-nostdin', '-v', 'error', '-y', '-protocol_whitelist', 'file,pipe', '-i', str(video), '-map_metadata', '-1',
         '-frames:v', '1', '-vf', "scale=w='min(720,iw)':h='min(720,ih)':force_original_aspect_ratio=decrease", '-q:v', '4', str(target)]
@@ -36,6 +49,7 @@ def make_poster(video: Path, directory: Path, stem: str) -> str:
 def convert_media(data: bytes, directory: Path, stem: str) -> dict:
     if not data or len(data) > MAX_DOWNLOAD:
         raise ValueError('첨부 파일은 20MB 이하로 올려주세요.')
+    ensure_ffmpeg()
     gif = data[:6] in {b'GIF87a', b'GIF89a'}
     with tempfile.TemporaryDirectory() as temporary:
         source = Path(temporary) / 'source'
