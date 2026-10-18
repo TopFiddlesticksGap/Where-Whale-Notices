@@ -1,7 +1,6 @@
 """첨부 GIF/MP4/MP3를 모바일 재생용 파일로 변환합니다. FFmpeg는 게시 작업에서만 사용합니다."""
 from __future__ import annotations
 import hashlib
-import io
 import json
 import math
 import os
@@ -10,7 +9,6 @@ import subprocess
 import tempfile
 import urllib.request
 from pathlib import Path
-from PIL import Image, UnidentifiedImageError
 from notice_photos import ImageRedirects, MAX_DOWNLOAD, allowed_host
 
 
@@ -18,7 +16,7 @@ def ensure_ffmpeg() -> None:
     """새 첨부를 변환할 때만 FFmpeg를 설치합니다. 글만 있거나 이미 변환한 공지는 설치 시간 없이 바로 게시합니다."""
     if shutil.which('ffmpeg') and shutil.which('ffprobe'):
         return
-    if os.environ.get('NOTICE_INSTALL_FFMPEG') != '1':
+    if os.environ.get('NOTICE_INSTALL_TOOLS') != '1':
         raise OSError('FFmpeg가 설치되어 있지 않습니다.')
     for command in (['sudo', 'apt-get', 'update', '-qq'], ['sudo', 'apt-get', 'install', '-y', '-qq', '--no-install-recommends', 'ffmpeg']):
         subprocess.run(command, capture_output=True, timeout=240, check=True)
@@ -128,11 +126,8 @@ def publish_attachment(url: str, repository: str, number: int, index: int, folde
         data = response.read(MAX_DOWNLOAD + 1)
     if len(data) > MAX_DOWNLOAD:
         raise ValueError('첨부 파일은 20MB 이하로 올려주세요.')
-    try:
-        with Image.open(io.BytesIO(data)) as picture:
-            photo = picture.format in {'PNG', 'JPEG', 'WEBP'}
-    except (UnidentifiedImageError, OSError):
-        photo = False
+    # Pillow 없이 파일 머리 부분으로 사진을 구분하고, 사진일 때만 Pillow를 불러와 처리합니다.
+    photo = data[:8] == b'\x89PNG\r\n\x1a\n' or data[:3] == b'\xff\xd8\xff' or (data[:4] == b'RIFF' and data[8:12] == b'WEBP')
     if photo:
         # 기존 사진 캐시 경로와 변환 방식을 유지합니다.
         from notice_photos import optimize

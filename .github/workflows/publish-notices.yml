@@ -27,35 +27,23 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7, MIT / https://github.com/actions/checkout
         with:
           ref: main
-      # FFmpeg는 새 영상·음성 첨부를 변환할 때만 notice_media.py가 설치합니다.
-      - name: 파이썬 버전 확인
-        id: python
-        run: echo "version=$(python3 -c 'import sys; print(sys.version.split()[0])')" >> "$GITHUB_OUTPUT"
-      - name: 사진 처리 도구 캐시
-        id: tools
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, MIT / https://github.com/actions/cache
-        with:
-          path: ${{ runner.temp }}/notice-tools
-          key: notice-tools-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('scripts/requirements.txt') }}
-      - name: 사진 처리 도구 준비
+      # 게시글 작성·수정 때는 도구를 미리 준비하지 않습니다. 새 사진이나 영상·음성을 처리할 때만 스크립트가 필요한 도구를 설치합니다.
+      # 변환 스크립트를 바꿔 푸시할 때만 도구를 모두 설치하고 검증합니다.
+      - name: 검증 도구 준비
+        if: github.event_name == 'push'
         run: |
-          if test "${{ steps.tools.outputs.cache-hit }}" != 'true'; then
-            python3 -m venv "$RUNNER_TEMP/notice-tools"
-            "$RUNNER_TEMP/notice-tools/bin/python" -m pip install -q -r scripts/requirements.txt
-          fi
+          command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          python3 -m venv "$RUNNER_TEMP/notice-tools"
+          "$RUNNER_TEMP/notice-tools/bin/python" -m pip install -q -r scripts/requirements.txt
           echo "$RUNNER_TEMP/notice-tools/bin" >> "$GITHUB_PATH"
-      # 변환 스크립트가 바뀔 때만 검증합니다. 게시글 작성·수정 때는 바로 게시합니다.
-      - name: 영상 변환 도구 준비
-        if: github.event_name != 'issues'
-        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
       - name: 공지 변환 검증
-        if: github.event_name != 'issues'
+        if: github.event_name == 'push'
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - name: 게시글에서 게임 공지 생성
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          NOTICE_INSTALL_FFMPEG: '1'
+          NOTICE_INSTALL_TOOLS: '1'
         run: python3 scripts/publish_notices.py
       - name: 변경된 공지 반영
         shell: bash

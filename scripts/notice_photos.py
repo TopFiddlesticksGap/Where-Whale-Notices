@@ -3,16 +3,34 @@ from __future__ import annotations
 
 import hashlib
 import io
+import os
+import subprocess
+import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from PIL import Image, ImageOps, UnidentifiedImageError
-
 MAX_DOWNLOAD = 20 * 1024 * 1024
 MAX_PIXELS = 40_000_000
 DISPLAY_SIDE = 1600
-Image.MAX_IMAGE_PIXELS = MAX_PIXELS
+
+
+def pillow():
+    """새 사진을 처리할 때만 Pillow를 불러옵니다. 게시 작업에서는 없으면 그때 설치해 글만 있는 공지를 바로 게시합니다."""
+    try:
+        import PIL.Image
+    except ImportError:
+        if os.environ.get('NOTICE_INSTALL_TOOLS') != '1':
+            raise
+        target = Path(os.environ.get('RUNNER_TEMP', '/tmp')) / 'notice-pillow'
+        requirements = Path(__file__).with_name('requirements.txt')
+        subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', '--disable-pip-version-check', '--target', str(target), '-r', str(requirements)],
+            capture_output=True, timeout=120, check=True)
+        sys.path.insert(0, str(target))
+        import PIL.Image
+    from PIL import Image, ImageOps, UnidentifiedImageError
+    Image.MAX_IMAGE_PIXELS = MAX_PIXELS
+    return Image, ImageOps, UnidentifiedImageError
 
 
 def allowed_host(url: str) -> bool:
@@ -32,6 +50,7 @@ class ImageRedirects(urllib.request.HTTPRedirectHandler):
 def optimize(data: bytes) -> tuple[bytes, str]:
     if not data or len(data) > MAX_DOWNLOAD:
         raise ValueError("사진은 20MB 이하로 첨부해주세요.")
+    Image, ImageOps, UnidentifiedImageError = pillow()
     try:
         with Image.open(io.BytesIO(data)) as image:
             if image.format not in {"PNG", "JPEG", "WEBP"}:
