@@ -1,5 +1,19 @@
 {
     "version": 1,
-    "mails": [],
+    "mails": [
+        {
+            "id": "mail-20261018-182223",
+            "title": "운영자 선물",
+            "sentDate": "2026-10-18",
+            "expireDate": "",
+            "rewards": [
+                {
+                    "kind": "diamond",
+                    "id": "",
+                    "amount": 100000
+                }
+            ]
+        }
+    ],
     "coupons": []
 }
