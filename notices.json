@@ -2,6 +2,16 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-10",
+      "date": "2026-10-18",
+      "title": "공지 테스트",
+      "body": "공지 테스트 입니다.\n\n말꾸이뚜이 바니걸",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-10-1-4fdc4b440fbc15ef.png"
+      ],
+      "media": []
+    },
+    {
       "id": "issue-9",
       "date": "2026-10-18",
       "title": "Menace",
