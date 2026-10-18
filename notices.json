@@ -2,6 +2,16 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-6",
+      "date": "2026-10-18",
+      "title": "스타ㅏㅏ노바",
+      "body": "dsadasddas",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-6-1-88b5a09b7a05db1d.png"
+      ],
+      "media": []
+    },
+    {
       "id": "issue-5",
       "date": "2026-10-18",
       "title": "공지 테스트",
