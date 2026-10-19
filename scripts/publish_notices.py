@@ -20,6 +20,8 @@ import subprocess
 MAX_BYTES = 256 * 1024
 MAX_NOTICES = 50
 STAFF = {"OWNER", "MEMBER", "COLLABORATOR"}
+# GitHub가 첨부 업로드에 실패하거나 업로드 중에 저장하면 본문에 파일 대신 남기는 표시입니다.
+FAILED_UPLOAD = re.compile(r'<!--\s*Failed to upload "([^"]+)"\s*-->|!\[Uploading ([^\]]+?)(?:…|\.\.\.)?\]\(\)')
 MARKDOWN_IMAGE = re.compile(r'!\[[^\]]*\]\(\s*(https://[^\s)]+)(?:\s+["\'][^"\']*["\'])?\s*\)')
 
 
@@ -82,6 +84,10 @@ def convert(issue: dict, repository: str, approved_users: tuple | list = ()) -> 
     content = section(form, "본문")
     if not content or content == "_No response_":
         raise ValueError("본문을 입력해주세요.")
+    failed = [first or second for first, second in FAILED_UPLOAD.findall(content)]
+    if failed:
+        raise ValueError(f"첨부 파일 {', '.join(failed)}이(가) GitHub에 올라가지 않았습니다. "
+            "게시글을 수정해 파일을 다시 첨부하고, 미리보기에서 보이는지 확인한 뒤 저장해주세요. 사진과 GIF는 10MB 이하여야 합니다.")
     urls: list[str] = []
 
     def replace_image(match: re.Match) -> str:

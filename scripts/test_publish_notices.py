@@ -40,6 +40,11 @@ class PublishingTests(unittest.TestCase):
         self.assertEqual(result["imageUrls"], [url, PHOTO])
         self.assertNotIn("https://", result["body"])
 
+    def test_failed_upload_is_reported(self):
+        for content in ['<!-- Failed to upload "special.gif" -->', '본문\n![Uploading special.gif…]()']:
+            with self.assertRaisesRegex(ValueError, "special.gif"):
+                convert(issue(content), REPOSITORY)
+
     def test_attachment_without_body_text(self):
         result = convert(issue(PHOTO), REPOSITORY)
         self.assertEqual(result["imageUrls"], [PHOTO])
