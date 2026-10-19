@@ -2,6 +2,16 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-12",
+      "date": "2026-10-19",
+      "title": "공지 테스트!!!!!!!!!111",
+      "body": "ㄹㄴㅇㅁㄹㄴㅁㄹㅁ",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-12-1-10223183c452c8d1.png"
+      ],
+      "media": []
+    },
+    {
       "id": "issue-10",
       "date": "2026-10-18",
       "title": "공지 테스트",
