@@ -2,18 +2,26 @@
     "version": 1,
     "mails": [
         {
-            "id": "mail-20261018-182223",
-            "title": "운영자 선물",
-            "sentDate": "2026-10-18",
+            "id": "mail-20261026-beta-launch",
+            "title": "베타 런칭 선물",
+            "sentDate": "2026-10-26",
             "expireDate": "",
             "rewards": [
-                {
-                    "kind": "diamond",
-                    "id": "",
-                    "amount": 100000
-                }
+                { "kind": "diamond", "id": "", "amount": 100 },
+                { "kind": "gold", "id": "", "amount": 10000 },
+                { "kind": "egg", "id": "4", "amount": 1 }
             ]
         }
     ],
-    "coupons": []
+    "coupons": [
+        {
+            "hash": "e9742802ef687077afa98cd3238142c9ea989d99bad7e27da460afcda28ca802",
+            "title": "WhereWhale 쿠폰",
+            "startDate": "2026-10-26",
+            "expireDate": "",
+            "rewards": [
+                { "kind": "diamond", "id": "", "amount": 1000 }
+            ]
+        }
+    ]
 }
