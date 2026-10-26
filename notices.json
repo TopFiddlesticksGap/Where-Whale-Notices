@@ -2,66 +2,12 @@
   "version": 1,
   "notices": [
     {
-      "id": "issue-12",
-      "date": "2026-10-19",
-      "title": "공지 테스트!!!!!!!!!111",
-      "body": "ㄹㄴㅇㅁㄹㄴㅁㄹㅁ",
-      "imageUrls": [
-        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-12-1-10223183c452c8d1.png"
-      ],
-      "media": []
-    },
-    {
-      "id": "issue-10",
-      "date": "2026-10-18",
-      "title": "공지 테스트",
-      "body": "공지 테스트 입니다.\n\n말꾸이뚜이 바니걸",
-      "imageUrls": [
-        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-10-1-4fdc4b440fbc15ef.png"
-      ],
-      "media": []
-    },
-    {
-      "id": "issue-9",
-      "date": "2026-10-18",
-      "title": "Menace",
-      "body": "Present reality is not aligned with what was preordained\nbut\nDo not paint me a believer of deities\nMeaning exists without the divine\nMeaning equates to truth\nand\nThe only truth is that there is no truth\n\nThe dictation of perception belongs to us\nand us alone\nThis does not mean that meaning fluctuates\nfrom one conscience to another\nMeaning is constant\nMeaning equates to truth\nand\nThe only truth is that there is no truth\n\nA pursuit of freedom is in vain if one chases something\nlarger than themself\nAll things beyond conscience are fiction\nTrue freedom does not exist in circumstance\nIt exists in thought\nhowever\nNeither is of more significance\nFor thought is circumstance\nAnd circumstance to those unaltered\nBy existential disquiet is frightening\n\nThe only truth is that there is no truth\nAnd that truth is parallel to our meaning\nExisting without the divine\nThis is my only belief\nOne of verity\nOne of freedom\nOne of a menace",
+      "id": "issue-13",
+      "date": "2026-10-26",
+      "title": "베타 런칭",
+      "body": "Where Whale 베타 서비스를 시작합니다. 플레이하시면서 불편한 점이나 의견이 있다면 언제든 알려 주세요.",
       "imageUrls": [],
-      "media": [
-        {
-          "kind": "audio",
-          "width": 0,
-          "height": 0,
-          "duration": 191.320792,
-          "url": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-9-1-df281d62c8fc50b5.mp3"
-        }
-      ]
-    },
-    {
-      "id": "issue-8",
-      "date": "2026-10-18",
-      "title": "공지사항 테스트",
-      "body": "공지 입니다 여러분~!!!!!!!!",
-      "imageUrls": [
-        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-8-3-ae7f2ab8215d3acb.png"
-      ],
-      "media": [
-        {
-          "kind": "audio",
-          "width": 0,
-          "height": 0,
-          "duration": 205.090525,
-          "url": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-8-1-d00770997d87545e.mp3"
-        },
-        {
-          "kind": "video",
-          "width": 406,
-          "height": 720,
-          "duration": 28.083333,
-          "url": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-8-2-017a65b8418bdd1c.mp4",
-          "poster": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-8-2-017a65b8418bdd1c-poster.jpg"
-        }
-      ]
+      "media": []
     }
   ]
 }
