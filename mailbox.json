@@ -7,7 +7,7 @@
             "sentDate": "2026-10-26",
             "expireDate": "",
             "rewards": [
-                { "kind": "diamond", "id": "", "amount": 100 },
+                { "kind": "diamond", "id": "", "amount": 10000 },
                 { "kind": "gold", "id": "", "amount": 10000 },
                 { "kind": "egg", "id": "4", "amount": 1 }
             ]
