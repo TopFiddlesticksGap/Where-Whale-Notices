@@ -2,6 +2,23 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-15",
+      "date": "2026-10-29",
+      "title": "청년",
+      "body": "중국인청년",
+      "imageUrls": [],
+      "media": [
+        {
+          "kind": "video",
+          "width": 720,
+          "height": 720,
+          "duration": 3.129156,
+          "url": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-15-1-e62947840ddb3f11.mp4",
+          "poster": "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-15-1-e62947840ddb3f11-poster.jpg"
+        }
+      ]
+    },
+    {
       "id": "issue-14",
       "date": "2026-10-29",
       "title": "똥글",
