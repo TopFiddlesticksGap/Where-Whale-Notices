@@ -2,6 +2,16 @@
   "version": 1,
   "notices": [
     {
+      "id": "issue-14",
+      "date": "2026-10-29",
+      "title": "똥글",
+      "body": "ㅇㅇㅇ\n\ndog feet ruler",
+      "imageUrls": [
+        "https://raw.githubusercontent.com/TopFiddlesticksGap/Where-Whale-Notices/main/images/generated/media-v2-14-1-759e1eacc65ab755.jpg"
+      ],
+      "media": []
+    },
+    {
       "id": "issue-13",
       "date": "2026-10-26",
       "title": "베타 런칭",
